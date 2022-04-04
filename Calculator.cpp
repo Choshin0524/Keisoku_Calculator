@@ -50,6 +50,27 @@ void Calculator::PriorityChecker(const std::string& op)
 	}
 }
 
+std::string Calculator::BracketsChecker(const std::string& string)
+{
+	for (int i = 0; i < string.length(); i++)
+	{
+		if (string[i] == '(')
+		{
+			Bpoint[0] = i;
+			break;
+		}
+	}
+	for (int i = string.length() - 1; i >= 0; i--)
+	{
+		if (string[i] == ')')
+		{
+			Bpoint[1] = i;
+			break;
+		}
+	}
+	return string.substr(Bpoint[0] + 1, Bpoint[1] - Bpoint[0] - 1);
+}
+
 float Calculator::Calculate(const std::vector<std::string>& result,
 	const std::string& op, const unsigned int& order) const
 {
@@ -66,9 +87,34 @@ float Calculator::Calculate(const std::vector<std::string>& result,
 	}
 }
 
+
 float Calculator::CalLoop()
 {
-	auto r = Separator(MainString);
+	while (MainString.find('(') != -1)
+	{
+		CheckString = BracketsChecker(MainString);
+		auto r = Separator(CheckString);
+		auto op = r.back();
+		PriorityChecker(op);
+		while (op.length() > 0 && P0pos.size() != 0)
+		{
+			float Rbuffer = Calculate(r, op, P0pos[0]);
+			r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 2);
+			op.erase(P0pos[0], 1);
+			r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
+			PriorityChecker(op);
+		}
+		while (op.length() > 0 && P1pos.size() != 0)
+		{
+			float Rbuffer = Calculate(r, op, P1pos[0]);
+			r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 2);
+			op.erase(P1pos[0], 1);
+			r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
+		}
+		MainString.erase(Bpoint[0], Bpoint[1] + 1);
+		MainString.insert(Bpoint[0], r[0]);
+	}
+	auto r = Separator(CheckString);
 	auto op = r.back();
 	PriorityChecker(op);
 	while (op.length() > 0 && P0pos.size() != 0)
