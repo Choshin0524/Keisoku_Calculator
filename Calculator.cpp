@@ -50,7 +50,8 @@ void Calculator::PriorityChecker(const std::string& op)
 	}
 }
 
-float Calculator::Calculate(const std::vector<std::string>& result, const std::string& op, const unsigned int& order) const
+float Calculator::Calculate(const std::vector<std::string>& result,
+	const std::string& op, const unsigned int& order) const
 {
 	switch (op[order])
 	{
@@ -81,7 +82,7 @@ float Calculator::CalLoop()
 	while (op.length() > 0 && P1pos.size() != 0)
 	{
 		float Rbuffer = Calculate(r, op, P1pos[0]);
-		r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 1);
+		r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 2);
 		op.erase(P1pos[0], 1);
 		r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
 	}
