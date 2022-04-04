@@ -7,13 +7,9 @@ std::vector<std::string> Calculator::Separator(const std::string& string) const
 
 	for (int i = 0; i < string.length(); i++)
 	{
-		if (string[i] == '+' ||
-			string[i] == '-' ||
-			string[i] == '*' ||
-			string[i] == '/')
-		{
+		if (string[i] == '+' || string[i] == '-' ||
+			string[i] == '*' ||	string[i] == '/')
 			spoint.push_back(i);
-		}
 	}
 	result.push_back(string.substr(spoint[0], spoint[1]));
 	for (int i = 1; i < spoint.size(); i++)
@@ -27,10 +23,9 @@ std::vector<std::string> Calculator::Separator(const std::string& string) const
 	return result;
 }
 
-
-std::string Calculator::GetMainString() const
+std::string Calculator::GetRawString() const
 {
-	return MainString;
+	return RawString;
 }
 
 void Calculator::PriorityChecker(const std::string& op)
@@ -54,19 +49,11 @@ std::string Calculator::BracketsChecker(const std::string& string)
 {
 	for (int i = 0; i < string.length(); i++)
 	{
-		if (string[i] == '(')
-		{
-			Bpoint[0] = i;
-			break;
-		}
+		if (string[i] == '(') Bpoint[0] = i;
 	}
 	for (int i = string.length() - 1; i >= 0; i--)
 	{
-		if (string[i] == ')')
-		{
-			Bpoint[1] = i;
-			break;
-		}
+		if (string[i] == ')') Bpoint[1] = i;
 	}
 	return string.substr(Bpoint[0] + 1, Bpoint[1] - Bpoint[0] - 1);
 }
@@ -87,34 +74,8 @@ float Calculator::Calculate(const std::vector<std::string>& result,
 	}
 }
 
-
-float Calculator::CalLoop()
+void Calculator::CalLoop(std::vector<std::string>& r)
 {
-	while (MainString.find('(') != -1)
-	{
-		CheckString = BracketsChecker(MainString);
-		auto r = Separator(CheckString);
-		auto op = r.back();
-		PriorityChecker(op);
-		while (op.length() > 0 && P0pos.size() != 0)
-		{
-			float Rbuffer = Calculate(r, op, P0pos[0]);
-			r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 2);
-			op.erase(P0pos[0], 1);
-			r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
-			PriorityChecker(op);
-		}
-		while (op.length() > 0 && P1pos.size() != 0)
-		{
-			float Rbuffer = Calculate(r, op, P1pos[0]);
-			r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 2);
-			op.erase(P1pos[0], 1);
-			r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
-		}
-		MainString.erase(Bpoint[0], Bpoint[1] + 1);
-		MainString.insert(Bpoint[0], r[0]);
-	}
-	auto r = Separator(CheckString);
 	auto op = r.back();
 	PriorityChecker(op);
 	while (op.length() > 0 && P0pos.size() != 0)
@@ -132,5 +93,19 @@ float Calculator::CalLoop()
 		op.erase(P1pos[0], 1);
 		r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
 	}
+}
+
+float Calculator::MainLoop()
+{
+	while (MainString.find('(') != -1)
+	{
+		CheckString = BracketsChecker(MainString);
+		auto r = Separator(CheckString);
+		CalLoop(r);
+		MainString.erase(Bpoint[0], Bpoint[1] + 1);
+		MainString.insert(Bpoint[0], r[0]);
+	}
+	auto r = Separator(MainString);
+	CalLoop(r);
 	return std::stof(r[0]);
 }

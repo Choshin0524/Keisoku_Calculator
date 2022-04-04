@@ -6,7 +6,7 @@ int main()
 	while (true)
 	{
 		Calculator cal;
-		std::cout << cal.CalLoop()<< std::endl;
+		std::cout << cal.GetRawString() << " = " << cal.MainLoop() << std::endl;
 	}
 	return 0;
 }
