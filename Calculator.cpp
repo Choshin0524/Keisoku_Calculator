@@ -1,41 +1,88 @@
 #include "Calculator.h"
-std::vector<std::string> Calculator::Separator() const
+std::vector<std::string> Calculator::Separator(const std::string& string) const
 {
-	unsigned int spoint = 0u;
+	std::vector<unsigned int> spoint = { 0u };
 	std::vector<std::string> result;
-	std::string op = "";
+	std::string op;
 
-	for (int i = 0; i < MainString.length(); i++)
+	for (int i = 0; i < string.length(); i++)
 	{
-		if (MainString[i] == '+' ||
-			MainString[i] == '-' ||
-			MainString[i] == '*' ||
-			MainString[i] == '/')
+		if (string[i] == '+' ||
+			string[i] == '-' ||
+			string[i] == '*' ||
+			string[i] == '/')
 		{
-			spoint = i;
+			spoint.push_back(i);
 		}
 	}
-	op[0] = MainString[spoint];
-	result = { MainString.substr(0, spoint), op, MainString.substr(spoint + 1) };
+	result.push_back(string.substr(spoint[0], spoint[1]));
+	for (int i = 0; i < spoint.size(); i++)
+	{
+		op += string[spoint[i]];
+		if (i != spoint.size() - 1)
+			result.push_back(string.substr(spoint[i] + 1, spoint[i + 1] - spoint[i] - 1));
+		else result.push_back(string.substr(spoint[i] + 1));
+	}
+	result.push_back(op);
 	return result;
 }
+
 
 std::string Calculator::GetMainString() const
 {
 	return MainString;
 }
 
-float Calculator::Calculate(const std::vector<std::string>& result) const
+void Calculator::PriorityChecker(const std::string& op)
 {
-	switch (result[1][0])
+	Priority = {};
+	P1pos = {};
+	P0pos = {};
+	for (int i = 0; i < op.length(); i++)
+	{
+		if (op[i] == '+' || op[i] == '-') Priority.push_back(1u);
+		else if (op[i] == '*' || op[i] == '/') Priority.push_back(0u);
+	}
+	for (int i = 0; i < Priority.size(); i++)
+	{
+		if (Priority[i] == 1u) P1pos.push_back(i);
+		else if (Priority[i] == 0u) P0pos.push_back(i);
+	}
+}
+
+float Calculator::Calculate(const std::vector<std::string>& result, const unsigned int& order) const
+{
+	switch (result.back()[order])
 	{
 	case '+':
-		return std::stof(result[0]) + std::stof(result[2]);
+		return std::stof(result[order]) + std::stof(result[order + 1]);
 	case '-':
-		return std::stof(result[0]) - std::stof(result[2]);
+		return std::stof(result[order]) - std::stof(result[order + 1]);
 	case '*':
-		return std::stof(result[0]) * std::stof(result[2]);
+		return std::stof(result[order]) * std::stof(result[order + 1]);
 	case '/':
-		return std::stof(result[0]) / std::stof(result[2]);
+		return std::stof(result[order]) / std::stof(result[order + 1]);
 	}
+}
+
+float Calculator::CalLoop()
+{
+	auto r = Separator(MainString);
+	auto op = r.back();
+	while (op.length() > 0 && P0pos.size() != 0)
+	{
+		PriorityChecker(op);
+		float Rbuffer = Calculate(r, P0pos[0]);
+		r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 1);
+		r.back().erase(P0pos[0], 1);
+		r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
+	}
+	while (op.length() > 0 && P0pos.size() != 0)
+	{
+		float Rbuffer = Calculate(r, P0pos[0]);
+		r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 1);
+		r.back().erase(P0pos[0], 1);
+		r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
+	}
+	return std::stof(r[0]);
 }
