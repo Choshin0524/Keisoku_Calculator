@@ -10,7 +10,7 @@ public:
 		:
 		Bpoint{0u,0u}
 	{
-		std::cout << "Enter an expresssion." << std::endl;
+		std::cout << "Enter an expression." << std::endl;
 		std::cin >> MainString;
 		RawString = MainString;
 	};
