@@ -15,7 +15,7 @@ public:
 	std::string GetMainString() const;
 	std::vector<std::string> Separator(const std::string& string) const;
 	void PriorityChecker(const std::string& op);
-	float Calculate(const std::vector<std::string>& result, const unsigned int& order) const;
+	float Calculate(const std::vector<std::string>& result, const std::string& op, const unsigned int& order) const;
 	float CalLoop();
 private:
 	std::string MainString;

@@ -1,7 +1,7 @@
 #include "Calculator.h"
 std::vector<std::string> Calculator::Separator(const std::string& string) const
 {
-	std::vector<unsigned int> spoint = { 0u };
+	std::vector<unsigned int> spoint = {0u};
 	std::vector<std::string> result;
 	std::string op;
 
@@ -16,12 +16,12 @@ std::vector<std::string> Calculator::Separator(const std::string& string) const
 		}
 	}
 	result.push_back(string.substr(spoint[0], spoint[1]));
-	for (int i = 0; i < spoint.size(); i++)
+	for (int i = 1; i < spoint.size(); i++)
 	{
 		op += string[spoint[i]];
 		if (i != spoint.size() - 1)
 			result.push_back(string.substr(spoint[i] + 1, spoint[i + 1] - spoint[i] - 1));
-		else result.push_back(string.substr(spoint[i] + 1));
+		else if (i = spoint.size() - 1) result.push_back(string.substr(spoint[i] + 1));
 	}
 	result.push_back(op);
 	return result;
@@ -50,9 +50,9 @@ void Calculator::PriorityChecker(const std::string& op)
 	}
 }
 
-float Calculator::Calculate(const std::vector<std::string>& result, const unsigned int& order) const
+float Calculator::Calculate(const std::vector<std::string>& result, const std::string& op, const unsigned int& order) const
 {
-	switch (result.back()[order])
+	switch (op[order])
 	{
 	case '+':
 		return std::stof(result[order]) + std::stof(result[order + 1]);
@@ -69,20 +69,21 @@ float Calculator::CalLoop()
 {
 	auto r = Separator(MainString);
 	auto op = r.back();
+	PriorityChecker(op);
 	while (op.length() > 0 && P0pos.size() != 0)
 	{
+		float Rbuffer = Calculate(r, op, P0pos[0]);
+		r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 2);
+		op.erase(P0pos[0], 1);
+		r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
 		PriorityChecker(op);
-		float Rbuffer = Calculate(r, P0pos[0]);
-		r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 1);
-		r.back().erase(P0pos[0], 1);
-		r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
 	}
-	while (op.length() > 0 && P0pos.size() != 0)
+	while (op.length() > 0 && P1pos.size() != 0)
 	{
-		float Rbuffer = Calculate(r, P0pos[0]);
-		r.erase(r.begin() + P0pos[0], r.begin() + P0pos[0] + 1);
-		r.back().erase(P0pos[0], 1);
-		r.insert(r.begin() + P0pos[0], std::to_string(Rbuffer));
+		float Rbuffer = Calculate(r, op, P1pos[0]);
+		r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 1);
+		op.erase(P1pos[0], 1);
+		r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
 	}
 	return std::stof(r[0]);
 }
