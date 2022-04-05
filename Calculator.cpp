@@ -51,9 +51,14 @@ std::string Calculator::BracketsChecker(const std::string& string)
 	{
 		if (string[i] == '(') Bpoint[0] = i;
 	}
-	for (int i = string.length() - 1; i >= 0; i--)
+	for (int i = Bpoint[0]; i < string.length(); i++)
 	{
-		if (string[i] == ')') Bpoint[1] = i;
+		if (string[i] == ')')
+		{
+			Bpoint[1] = i;
+			break;
+		}
+		
 	}
 	return string.substr(Bpoint[0] + 1, Bpoint[1] - Bpoint[0] - 1);
 }
@@ -102,7 +107,7 @@ float Calculator::MainLoop()
 		CheckString = BracketsChecker(MainString);
 		auto r = Separator(CheckString);
 		CalLoop(r);
-		MainString.erase(Bpoint[0], Bpoint[1] + 1);
+		MainString.erase(Bpoint[0], Bpoint[1] - Bpoint[0] + 1);
 		MainString.insert(Bpoint[0], r[0]);
 	}
 	auto r = Separator(MainString);
