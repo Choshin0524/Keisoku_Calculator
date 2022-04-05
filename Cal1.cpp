@@ -1,5 +1,4 @@
 #include "Calculator.h"
-#include <iomanip>
 
 int main()
 {
