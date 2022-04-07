@@ -58,7 +58,6 @@ std::string Calculator::BracketsChecker(const std::string& string)
 			Bpoint[1] = i;
 			break;
 		}
-		
 	}
 	return string.substr(Bpoint[0] + 1, Bpoint[1] - Bpoint[0] - 1);
 }
@@ -97,7 +96,21 @@ void Calculator::CalLoop(std::vector<std::string>& r)
 		r.erase(r.begin() + P1pos[0], r.begin() + P1pos[0] + 2);
 		op.erase(P1pos[0], 1);
 		r.insert(r.begin() + P1pos[0], std::to_string(Rbuffer));
+		PriorityChecker(op);
 	}
+}
+
+bool Calculator::CheckEnd() const
+{
+	if (MainString[0] == 'e')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
 }
 
 float Calculator::MainLoop()
