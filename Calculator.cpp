@@ -100,15 +100,17 @@ void Calculator::CalLoop(std::vector<std::string>& r)
 	}
 }
 
-bool Calculator::CheckEnd() const
+bool Calculator::CheckFirstChar() const
 {
-	if (MainString[0] == 'e')
+	switch (MainString[0])
 	{
+	case 'e':
 		return true;
-	}
-	else
-	{
+	case 'c':
 		return false;
+	case 'L':
+		std::cout << "Hello" << std::endl;
+		return true;
 	}
 	
 }

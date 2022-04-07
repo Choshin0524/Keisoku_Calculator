@@ -5,7 +5,7 @@ int main()
 	while (true)
 	{
 		Calculator cal;
-		if (cal.CheckEnd())
+		if (cal.CheckFirstChar())
 		{
 			break;
 		}	

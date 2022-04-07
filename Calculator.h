@@ -21,7 +21,7 @@ public:
 	std::string BracketsChecker(const std::string& string);
 	float Calculate(const std::vector<std::string>& result, const std::string& op, const unsigned int& order) const;
 	void CalLoop(std::vector<std::string>& r);
-	bool CheckEnd() const;
+	bool CheckFirstChar() const;
 	float MainLoop();
 private:
 	std::string MainString;
